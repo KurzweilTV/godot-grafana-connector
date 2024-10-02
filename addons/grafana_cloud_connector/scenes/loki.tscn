@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgwsk87sayvb"]
+
+[ext_resource type="Script" path="res://addons/grafana_cloud_connector/scripts/loki.gd" id="1_oblie"]
+
+[node name="Loki" type="Node"]
+script = ExtResource("1_oblie")
+loki_url = null
+user_id = null
+api_key = null

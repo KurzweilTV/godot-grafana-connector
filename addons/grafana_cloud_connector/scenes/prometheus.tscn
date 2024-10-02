@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://du7lt23lu1rku"]
+
+[ext_resource type="Script" path="res://addons/grafana_cloud_connector/scripts/prometheus.gd" id="1_0ybsi"]
+
+[node name="Prometheus" type="Node"]
+script = ExtResource("1_0ybsi")
+url = null
+user_id = null
+api_key = null
