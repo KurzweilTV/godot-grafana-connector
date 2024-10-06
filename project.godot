@@ -11,8 +11,10 @@ config_version=5
 [application]
 
 config/name="Grafana Cloud Connector"
-run/main_scene="res://tester.tscn"
+config/tags=PackedStringArray("plugin")
+run/main_scene="res://examples/tester.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+run/low_processor_mode=true
 config/icon="res://icon.png"
 
 [autoload]

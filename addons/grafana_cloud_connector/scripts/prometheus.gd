@@ -1,21 +1,35 @@
 @tool
-class_name prometheus
+class_name prometheus # Class for handling Metrics
 extends Node
 
-@export var url = "https://your-prometheus-url/api/v1/push/influx/write"
-@export var user_id = 000000
-@export var api_key = 'glc.....abc'
+# Configuration
+var influx_url : String = "https://<grfana-provided-url>.grafana.net/api/v1/push/influx/write"
+var influx_user_id : int = 000000
+var influx_api_key : String = 'glc.....'
+var game_name : String = "grafana_plugin"
+
+###################################
 
 var http_request : HTTPRequest = HTTPRequest.new()
 var metric_queue = []
 var is_request_in_progress = false
+var env: String:
+	get:
+		if OS.is_debug_build():
+			return "dev"
+		else:
+			return "live"
 
 func _ready() -> void:
 	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed)
 
 func send_metric(measurement_name: String, field_value: float, tags: Dictionary = {}) -> void:
-	# Add the metric to the queue
+	var environment = {"environment":env}
+	var app_title = {"game":game_name}
+	tags.merge(environment)
+	tags.merge(app_title)
+	
 	metric_queue.append({
 		"measurement_name": measurement_name,
 		"field_key": "value",
@@ -43,7 +57,7 @@ func _process_next_metric():
 	var body = "%s%s %s=%s" % [metric.measurement_name, tag_string, metric.field_key, str(metric.field_value)]
 	
 	# Prepare headers
-	var auth_str = "%s:%s" % [user_id, api_key]
+	var auth_str = "%s:%s" % [influx_user_id, influx_api_key]
 	var auth_base64 = Marshalls.utf8_to_base64(auth_str)
 	var headers = [
 		"Authorization: Basic %s" % auth_base64,
@@ -51,7 +65,7 @@ func _process_next_metric():
 	]
 	
 	# Send the request
-	var err = http_request.request(url, headers, HTTPClient.METHOD_POST, body)
+	var err = http_request.request(influx_url, headers, HTTPClient.METHOD_POST, body)
 	
 	if err != OK:
 		push_error("Failed to send HTTP request: %s" % err)
@@ -59,6 +73,5 @@ func _process_next_metric():
 		_process_next_metric()  # Proceed to next metric even if there's an error
 
 func _on_request_completed(result: int, response_code: int, headers, body) -> void:
-	print("Response code: ", response_code)
 	is_request_in_progress = false
 	_process_next_metric()

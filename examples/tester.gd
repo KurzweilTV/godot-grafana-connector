@@ -1,5 +1,9 @@
 extends Node
 
+@onready var line_edit: LineEdit = %LineEdit
+@onready var spin_box: SpinBox = %SpinBox
+@onready var custom_button: Button = %CustomButton
+
 var log_types = ["info", "warning", "error", "debug"]
 
 func _ready() -> void:
@@ -12,3 +16,7 @@ func _on_test_log_pressed() -> void:
 
 func _on_test_metric_button_pressed() -> void:
 	Grafana.prometheus.send_metric("test_metric", randf_range(0, 50),{"game":"grafana_plugin"})
+
+
+func _on_custom_button_pressed() -> void:
+	Grafana.prometheus.send_metric(line_edit.text, spin_box.value, {"game":"grafana_plugin"})

@@ -1,0 +1,81 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8h1ny2njnxan"]
+
+[ext_resource type="Script" path="res://examples/tester.gd" id="1_55ouy"]
+[ext_resource type="PackedScene" uid="uid://cxtgntwfn4sir" path="res://addons/grafana_cloud_connector/scenes/MetricsCollector.tscn" id="2_3ekor"]
+
+[node name="Tester" type="Node2D"]
+script = ExtResource("1_55ouy")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 2.0
+offset_right = 398.0
+offset_bottom = 602.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="TestLogButton" type="Button" parent="CenterContainer/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Send Random Log Line"
+
+[node name="TestMetricButton" type="Button" parent="CenterContainer/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Send Random Metric"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/GridContainer"]
+layout_mode = 2
+
+[node name="CustomMetric" type="PanelContainer" parent="CenterContainer/GridContainer"]
+custom_minimum_size = Vector2(0, 70.995)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/GridContainer/CustomMetric"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/GridContainer/CustomMetric/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/GridContainer/CustomMetric/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Send a Custom Metric"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/GridContainer/CustomMetric/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="CenterContainer/GridContainer/CustomMetric/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="CenterContainer/GridContainer/CustomMetric/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+alignment = 1
+
+[node name="CustomButton" type="Button" parent="CenterContainer/GridContainer/CustomMetric/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Send"
+
+[node name="MetricsCollector" parent="." instance=ExtResource("2_3ekor")]
+
+[connection signal="pressed" from="CenterContainer/GridContainer/TestLogButton" to="." method="_on_test_log_pressed"]
+[connection signal="pressed" from="CenterContainer/GridContainer/TestMetricButton" to="." method="_on_test_metric_button_pressed"]
+[connection signal="pressed" from="CenterContainer/GridContainer/CustomMetric/MarginContainer/VBoxContainer/HBoxContainer/CustomButton" to="." method="_on_custom_button_pressed"]

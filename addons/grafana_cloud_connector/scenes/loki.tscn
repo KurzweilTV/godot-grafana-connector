@@ -4,6 +4,3 @@
 
 [node name="Loki" type="Node"]
 script = ExtResource("1_oblie")
-loki_url = null
-user_id = null
-api_key = null

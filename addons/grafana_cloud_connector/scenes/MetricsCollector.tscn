@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxtgntwfn4sir"]
+
+[ext_resource type="Script" path="res://addons/grafana_cloud_connector/scripts/EngineMetrics.gd" id="1_kutct"]
+
+[node name="MetricsCollector" type="Node"]
+script = ExtResource("1_kutct")
