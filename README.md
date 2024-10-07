@@ -1,3 +1,4 @@
+![Grafana Cloud Image](grafana1.webp)
 
 # Godot Grafana Cloud Connector
 
