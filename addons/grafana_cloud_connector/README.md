@@ -20,6 +20,7 @@ Once logged in, navigate to **Connections** on the left, then follow the instruc
 3. Generate an API Key.
 4. Copy the **URL**, **USER_ID**, and **API_KEY** to use in the Godot script.
    - Note: You might find this easier if you choose the **Python** option.
+   - Endpoint tip: Grafana Cloud -> select your stack -> InfluxDB Connectivity -> copy the endpoint (e.g. `https://prometheus-prod-00-prod-XX-east-0.grafana.net`).
 
 ---
 
@@ -47,13 +48,15 @@ Note: The download includes an optional `examples/` folder containing a test sce
 
 The plugin should now be enabled.
 
+Once enabled, just configure the credentials and the plugin will start collecting and sending metrics automatically.
+
 ---
 
 ### Script Configuration
 
 You'll need to add the information you copied from Grafana Cloud into the `loki.gd` and `prometheus.gd` scripts located at `res://addons/grafana_cloud_connector/scripts/`.
 
-In these scripts, you can also configure the `game_name`, which will be added as a label to every metric/log, helping you organize your data in Grafana.
+In these scripts, you can also configure the `game_name`, which will be added as a label to every metric/log, helping you organize your data in Grafana. Metrics are now batched and sent every 60 seconds instead of one request per metric.
 
 ---
 
@@ -61,14 +64,19 @@ In these scripts, you can also configure the `game_name`, which will be added as
 
 ### Metrics
 
-To send a metric from anywhere in your project, use:
+Metrics are collected automatically after enabling the plugin. The prometheus node batches all metrics and sends a single request every 60 seconds.
+
+To record custom metrics from anywhere in your project, use:
 
 ```gdscript
-Grafana.prometheus.send_metric("metric_name", 123, {"Optional": "Labels"})
+Grafana.prometheus.record_gauge("metric_name", 123, {"optional": "labels"})
+Grafana.prometheus.record_counter("metric_name", 1, {"optional": "labels"})
 ```
 
-- **metric_name** (string) and **metric** (float) are required.
-- **Labels** are optional but help in organizing your data in Grafana.
+- **record_gauge** stores the latest value for the metric.
+- **record_counter** accumulates values and adds the `_total` suffix per Prometheus conventions.
+- All metrics use the `metric_prefix` from `prometheus.gd` (default: `godot_`).
+- Labels are optional and are merged with global labels (`game`, `environment`).
 
 ### Logs
 
@@ -91,8 +99,6 @@ Grafana.loki.send_log("log line goes here", "level", {"Optional": "Labels"})
 
 ## Auto Instrumentation
 
-The plugin includes a scene for automatically collecting metrics globally from the engine.
+Performance metrics are collected automatically from the engine once the plugin is enabled. Collection interval and toggle are configurable in `prometheus.gd` via `collection_time` and `active`.
 
-Add the scene located at `res://addons/grafana_cloud_connector/scenes/MetricsCollector.tscn` anywhere in your project. Once configured, performance metrics will be sent to Grafana every minute.
-
-> **Note**: More frequent metrics may be possible with a paid Grafana Cloud account. This can be configured in the `EngineMetrics.gd` script.
+> **Note**: More frequent metrics may be possible with a paid Grafana Cloud account. This can be configured in `prometheus.gd`.
